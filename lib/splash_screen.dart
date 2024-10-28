@@ -1,8 +1,10 @@
+// splash_screen.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:camera/camera.dart';
 import 'main.dart';
 import 'guide_screen.dart';
+import 'text_reader_screen.dart';  // Importa la nueva pantalla
 
 class SplashScreen extends StatelessWidget {
   final List<CameraDescription> cameras;
@@ -65,31 +67,6 @@ class SplashScreen extends StatelessWidget {
             SizedBox(height: 15),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => GuideScreen(),
-                  ),
-                );
-              },
-              child: Text(
-                'Guía de uso',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            SizedBox(height: 15),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
@@ -109,6 +86,31 @@ class SplashScreen extends StatelessWidget {
               },
               child: Text(
                 'Detección de Billetes',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(height: 15),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TextReaderScreen(cameras: cameras),  // Nueva pantalla de lectura de texto
+                  ),
+                );
+              },
+              child: Text(
+                'Lectura de Texto',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
