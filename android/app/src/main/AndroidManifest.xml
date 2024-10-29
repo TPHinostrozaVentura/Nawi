@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.realtime_obj_detection">
    <application
-        android:label="realtime_obj_detection"
+        android:label="Ñawi Sense"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

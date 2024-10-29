@@ -34,38 +34,29 @@ class _TextReaderScreenState extends State<TextReaderScreen> {
   void initializeCamera() async {
     _controller = CameraController(
       widget.cameras[0],
-      ResolutionPreset.high,
+      ResolutionPreset.max,
       enableAudio: false,
     );
 
     await _controller.initialize();
     if (!mounted) return;
-
     setState(() {});
   }
 
-  void captureAndRecognizeText() async {
+  void captureAndReadText() async {
     if (isProcessing) return;
+    setState(() => isProcessing = true);
 
-    setState(() {
-      isProcessing = true;
-    });
+    final image = await _controller.takePicture();
+    final inputImage = InputImage.fromFilePath(image.path);
+    final recognizedText = await textRecognizer.processImage(inputImage);
 
-    try {
-      final XFile imageFile = await _controller.takePicture();
-      final inputImage = InputImage.fromFilePath(imageFile.path);
-      final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
-
-      for (TextBlock block in recognizedText.blocks) {
-        await flutterTts.speak(block.text);
-      }
-    } catch (e) {
-      print("Error en el reconocimiento de texto: $e");
-    } finally {
-      setState(() {
-        isProcessing = false;
-      });
+    for (TextBlock block in recognizedText.blocks) {
+      await flutterTts.speak(block.text);
+      break; // Reads only the first detected block
     }
+
+    setState(() => isProcessing = false);
   }
 
   @override
@@ -85,16 +76,20 @@ class _TextReaderScreenState extends State<TextReaderScreen> {
       appBar: AppBar(
         title: Text('Lectura de Texto'),
       ),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
+          Positioned.fill(
             child: CameraPreview(_controller),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              onPressed: captureAndRecognizeText,
-              child: Text('Capturar y Leer Texto'),
+          Positioned(
+            bottom: 30,
+            left: 0,
+            right: 0,
+            child: Center(
+              child: ElevatedButton(
+                onPressed: captureAndReadText,
+                child: Text('Capturar y Leer Texto'),
+              ),
             ),
           ),
         ],
