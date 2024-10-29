@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:flutter/services.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'splash_screen.dart';
 import 'package:tflite_v2/tflite_v2.dart';
+import 'text_reader_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final List<CameraDescription> cameras;
-
   const MyApp({Key? key, required this.cameras});
 
   @override
@@ -27,9 +27,9 @@ class MyApp extends StatelessWidget {
 
 class RealTimeObjectDetection extends StatefulWidget {
   final List<CameraDescription> cameras;
-  final String model;  // Agregado el parámetro 'model'
+  final String model;
 
-  RealTimeObjectDetection({required this.cameras, required this.model});  // Asegurarse de pasar el parámetro model
+  RealTimeObjectDetection({required this.cameras, required this.model});
 
   @override
   _RealTimeObjectDetectionState createState() => _RealTimeObjectDetectionState();
@@ -44,14 +44,18 @@ class _RealTimeObjectDetectionState extends State<RealTimeObjectDetection> {
   bool isProcessing = false;
   FlutterTts flutterTts = FlutterTts();
   bool isSpeaking = false;
-  bool isFlashOn = false; // Para controlar la linterna
+  bool isFlashOn = false;
+
+  stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
 
   @override
   void initState() {
     super.initState();
     initializeCamera();
-    loadModel(widget.model);  // Usando el parámetro model del widget
+    loadModel(widget.model);
     configureTts();
+    initSpeechRecognizer(); // Initialize speech recognition
   }
 
   void configureTts() async {
@@ -163,6 +167,45 @@ class _RealTimeObjectDetectionState extends State<RealTimeObjectDetection> {
         print("Error al cambiar el modo de flash: $e");
       }
     }
+  }
+
+  // Initialize speech recognizer
+  void initSpeechRecognizer() async {
+    bool available = await _speech.initialize(onStatus: (val) {
+      if (val == 'done' && _isListening) {
+        startListening(); // Restart listening after it stops
+      }
+    }, onError: (val) => print('Speech recognizer error: $val'));
+
+    if (available) {
+      startListening();
+    }
+  }
+
+  // Start listening for voice commands
+  void startListening() {
+    _speech.listen(onResult: (val) {
+      if (val.recognizedWords.toLowerCase().contains("cambiar a lectura de texto")) {
+        _navigateToTextReading();
+      } else if (val.recognizedWords.toLowerCase().contains("cambiar a detección de objetos")) {
+        _navigateToObjectDetection();
+      }
+    });
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _navigateToTextReading() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => TextReaderScreen(cameras: widget.cameras)),
+    );
+  }
+
+  void _navigateToObjectDetection() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => RealTimeObjectDetection(cameras: widget.cameras, model: widget.model)),
+    );
   }
 
   @override

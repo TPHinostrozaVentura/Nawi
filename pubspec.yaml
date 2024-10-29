@@ -16,6 +16,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   tflite_v2: ^1.0.0
   camera: ^0.11.0
+  speech_to_text: ^5.4.0
+
 
 dev_dependencies:
   flutter_test:
