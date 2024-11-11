@@ -12,6 +12,7 @@ void main() async {
   runApp(MyApp(cameras: cameras));
 }
 
+
 class MyApp extends StatelessWidget {
   final List<CameraDescription> cameras;
   const MyApp({Key? key, required this.cameras});
