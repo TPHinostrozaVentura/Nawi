@@ -34,6 +34,7 @@ flutter:
     - assets/model.tflite  # Agregado el nuevo modelo
     - assets/labels.txt    # Etiquetas del modelo de billetes
     - assets/logo.png
+    - assets/blindimg2.jpeg
 
 flutter_icons:
   android: true
