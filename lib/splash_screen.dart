@@ -1,9 +1,9 @@
 // splash_screen.dart
+import 'package:Nawi/useGuide.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:camera/camera.dart';
 import 'main.dart';
-import 'guide_screen.dart';
 import 'text_reader_screen.dart';  // Importa la nueva pantalla
 
 class SplashScreen extends StatelessWidget {
@@ -116,6 +116,31 @@ class SplashScreen extends StatelessWidget {
                 },
                 child: const Text(
                   'Lectura de Texto',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) {
+                    return const UserGuide();
+                  },)
+                  );
+                },
+                child: const Text(
+                  'Guia de Uso',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
