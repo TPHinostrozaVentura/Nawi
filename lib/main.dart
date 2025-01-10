@@ -37,6 +37,10 @@ class RealTimeObjectDetection extends StatefulWidget {
 }
 
 class _RealTimeObjectDetectionState extends State<RealTimeObjectDetection> {
+
+  List<String> lastUniqueObjects = [];
+  final int maxObjects = 10;
+
   late CameraController _controller;
   bool isModelLoaded = false;
   List<dynamic>? recognitions;
@@ -57,6 +61,10 @@ class _RealTimeObjectDetectionState extends State<RealTimeObjectDetection> {
     loadModel(widget.model);
     configureTts();
     initSpeechRecognizer(); // Initialize speech recognition
+  }
+
+  String getObjectsString() {
+    return lastUniqueObjects.join(', ');
   }
 
   void configureTts() async {
@@ -136,7 +144,20 @@ class _RealTimeObjectDetectionState extends State<RealTimeObjectDetection> {
     });
 
     if (recognitions != null && recognitions.isNotEmpty && !isSpeaking) {
-      describeObject(recognitions[0]["detectedClass"], recognitions[0]["confidenceInClass"]);
+
+      String detectedClass = recognitions[0]["detectedClass"];
+      double confidence = recognitions[0]["confidenceInClass"];
+
+      if(!lastUniqueObjects.contains(detectedClass)){
+        if(lastUniqueObjects.length>=maxObjects){
+          lastUniqueObjects.remove(0);
+        }
+        lastUniqueObjects.add(detectedClass);
+      }
+
+      print('Últimos objetos detectados: ${lastUniqueObjects.join(", ")}');
+
+      describeObject(detectedClass, confidence);
     }
   }
 
